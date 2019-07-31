@@ -32,17 +32,14 @@ app.listen(port, () => {
 
 app.use(express.static(__dirname + '/public'))
     .use(cors())
-    .use(cookieParser());
-
-app.get("/helloworld", (req, res) => {
-    res.send(JSON.stringify({"message" : "Hello World!"}));
-});    
+    .use(cookieParser());  
 
 app.get('/login', (req, res) => {
     let state = generateRandomString(16);
     res.cookie(STATEKEY, state);
 
-    const scope = 'user-read-playback-state'
+    const scope = 'user-read-private user-read-email user-read-playback-state'
+
     res.redirect('https://accounts.spotify.com/authorize?' + 
         querystring.stringify({
             response_type : 'code',
@@ -59,7 +56,7 @@ app.get('/callback', (req, res) => {
     let storedState = req.cookies ? req.cookies[STATEKEY] : null;
 
     if(state === null || state !== storedState) {
-        res.redirect('http://localhost:3000/#' +
+        res.redirect('http://localhost:3000/' +
         querystring.stringify({
             error : 'state_mismatch'
         }));
@@ -79,8 +76,8 @@ app.get('/callback', (req, res) => {
             json : true
         };
 
-        request.post(authOptions, (err, res, body) => {
-            if(!err && res.statusCode == 200) {
+        request.post(authOptions, (error, response, body) => {
+            if(!error && res.statusCode == 200) {
                 let access_token = body.access_token,
                     refresh_token = body.refresh_token;
                 
@@ -90,18 +87,18 @@ app.get('/callback', (req, res) => {
                     json : true
                 };
 
-                request.get(options, (err, res, body) => {
+                request.get(options, (error, response, body) => {
                     console.log(body);
                 });
 
-                res.redirect('http://localhost:3000/#' + 
+                res.redirect('http://localhost:3000/' + 
                 querystring.stringify({
                     access_token,
                     refresh_token
                 }));
             }
             else {
-                res.redirect('http://localhost:3000/#' + 
+                res.redirect('http://localhost:3000/' + 
                     querystring.stringify({
                         error : "invalid_token"
                 }));
