@@ -10,7 +10,6 @@ const spotifyApi = new SpotifyWebApi();
 export default class App extends Component {
   constructor(props) {
     super(props);
-
   }
 
   componentWillMount() {
@@ -51,6 +50,9 @@ export default class App extends Component {
       console.log(res);
       this.setState({
         dataReceived: true,
+        isPlaying : res.is_playing,
+        repeatState : res.repeat_state,
+        shuffleState : res.shuffle_state,
         nowPlaying: {
           title: { name: res.item.name, url: res.item.external_urls.spotify },
           albumArt: res.item.album.images[0].url,
@@ -76,15 +78,48 @@ export default class App extends Component {
     });
   }
 
+  handlePlayback(action) {
+      switch(action) {
+        case "shuffle":
+          spotifyApi.setShuffle(!this.state.shuffleState);
+          break;
+        case "back":
+          spotifyApi.skipToPrevious();
+          break;
+        case "playPause":
+          if(this.state.isPlaying) {
+            spotifyApi.pause();
+          }
+          else {
+            spotifyApi.play();
+          }
+          break;
+        case "forward":
+          spotifyApi.skipToNext();
+          break;
+        case "repeat":
+          let possibleRepeatStates = ['off', 'context', 'track'];
+          let res = "";
+          for(let i = 0; i < possibleRepeatStates.length; i++)
+          {
+            if(possibleRepeatStates[i] === this.state.repeatState) {
+              res = possibleRepeatStates[(i + 1) % possibleRepeatStates.length];
+            }
+          }
+          spotifyApi.setRepeat(res);
+          break;
+      }
+  }
+
   render() {
     return (
       <div>
-        <div className="wrapper">
+        <div className="wrapper" onMouseEnter={this.handleMouseOverInfo.bind(this)} onMouseLeave={this.handleMouseOutInfo.bind(this)}>
           {!this.state.loggedIn && <a href="http://localhost:8888/login"> Login to Spotify</a>}
           {this.state.dataReceived &&
             <div className="bg">
               <div>
-                <img style={{ opacity: this.state.opacity }} onMouseEnter={this.handleMouseOverInfo.bind(this)} onMouseLeave={this.handleMouseOutInfo.bind(this)} className="image" src={this.state.nowPlaying.albumArt} alt="Album Art" />
+                <img style={{ opacity: this.state.opacity }} className="image" src={this.state.nowPlaying.albumArt} alt="Album Art" />
               </div>
             </div>
           }
@@ -101,16 +136,20 @@ export default class App extends Component {
                 })
                 }
               </div>
-            </div>
-          }
-          {this.state.dataReceived && 
-            <div className="progressbar-wrapper">
-              <div style={{color: "white", marginRight: "5px"}}>{`${Math.floor(this.state.nowPlaying.progress/1000/60)}:${('00'+Math.round((this.state.nowPlaying.progress % 60000)/1000)).slice(-2)}`}</div>
-              <div className="progressbar-bg">
-                <div style={{ width: `${(this.state.nowPlaying.progress / this.state.nowPlaying.length) * 100}%`}} className="progressbar">
-                </div>
+              <div className="progressbar-wrapper">
+                <div style={{color: "white", marginRight: "5px"}}>{`${Math.floor(this.state.nowPlaying.progress/1000/60)}:${('00'+Math.round((this.state.nowPlaying.progress % 60000)/1000)).slice(-2)}`}</div>
+                  <div className="progressbar-bg">
+                    <div style={{ width: `${(this.state.nowPlaying.progress / this.state.nowPlaying.length) * 100}%`}} className="progressbar"></div>
+                  </div>
+                <div style={{color: "white", marginLeft : "5px"}}>{`${Math.floor(this.state.nowPlaying.length/1000/60)}:${('00'+Math.round((this.state.nowPlaying.length % 60000)/1000)).slice(-2)}`}</div>
               </div>
-              <div style={{color: "white", marginLeft : "5px"}}>{`${Math.floor(this.state.nowPlaying.length/1000/60)}:${('00'+Math.round((this.state.nowPlaying.length % 60000)/1000)).slice(-2)}`}</div>
+              <div className="playback-wrapper">
+                  <button onClick={this.handlePlayback.bind(this, "shuffle")}>s</button>
+                  <button onClick={this.handlePlayback.bind(this, "back")}>b</button>
+                  <button onClick={this.handlePlayback.bind(this, "playPause")}>p</button>
+                  <button onClick={this.handlePlayback.bind(this, "forward")}>f</button>
+                  <button onClick={this.handlePlayback.bind(this, "repeat")}>r</button>
+              </div>
             </div>
           }
 

@@ -26,19 +26,18 @@
 
 .info-wrapper {
     position: absolute;
-    bottom: 20%;
-    left: 0;
+    width: 90%;
+    margin: auto;
+    bottom: 10%;
+    left: 5%
 }
 
 .progressbar-wrapper {
     display: flex;
     flex-direction: row;
-    position: absolute;
     width: 80%;
     height: 10px;
     margin: auto;
-    bottom: 10%;
-    left: 10%;
 }
 
 .progressbar-bg {
@@ -52,4 +51,10 @@
     background-color: white;
 }
 
+.playback-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 

@@ -26,8 +26,10 @@
 
 .info-wrapper {
   position: absolute;
-  bottom: 20%;
-  left: 0;
+  width: 90%;
+  margin: auto;
+  bottom: 10%;
+  left: 5%;
 }
 
 .progressbar-wrapper {
@@ -38,12 +40,9 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  position: absolute;
   width: 80%;
   height: 10px;
   margin: auto;
-  bottom: 10%;
-  left: 10%;
 }
 
 .progressbar-bg {
@@ -55,5 +54,19 @@
 .progressbar {
   height: 100%;
   background-color: white;
+}
+
+.playback-wrapper {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 /*# sourceMappingURL=App.css.map */
