@@ -2,9 +2,20 @@ import React, { Component } from 'react';
 import logo from '../logo.svg';
 import '../css/App.css';
 
-import Background from './Background'
-import ProgressBar from './ProgressBar'
-import Text from './Text'
+import Background from './Background';
+import ProgressBar from './ProgressBar';
+import Text from './Text';
+
+import IconButton from '@material-ui/core/IconButton';
+import Fab from '@material-ui/core/Fab';
+
+import PlayIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
+import SkipIcon from '@material-ui/icons/SkipNext';
+import PreviousIcon from '@material-ui/icons/SkipPrevious';
+import RepeatIcon from '@material-ui/icons/Repeat';
+import RepeatOneIcon from '@material-ui/icons/RepeatOne';
+import ShuffleIcon from '@material-ui/icons/Shuffle';
 
 import isElectron from 'is-electron';
 
@@ -129,7 +140,7 @@ export default class App extends Component {
             <Background albumArt={this.state.nowPlaying.albumArt} opacity={this.state.opacity}/>
           }
 
-          {this.state.dataReceived && this.state.view &&
+          {this.state.dataReceived && true &&
             <div className="info-wrapper">
               <Text type="title" text={this.state.nowPlaying.title.name} url={this.state.nowPlaying.title.url} />
               <div style={{marginBottom: '15px'}}>
@@ -149,11 +160,31 @@ export default class App extends Component {
               </div> */}
               <ProgressBar progress={this.state.nowPlaying.progress} length={this.state.nowPlaying.length} />
               <div className="playback-wrapper">
-                  <button onClick={this.handlePlayback.bind(this, "shuffle")}>s</button>
+                  {/* <button onClick={this.handlePlayback.bind(this, "shuffle")}>s</button>
                   <button onClick={this.handlePlayback.bind(this, "back")}>b</button>
                   <button onClick={this.handlePlayback.bind(this, "playPause")}>p</button>
                   <button onClick={this.handlePlayback.bind(this, "forward")}>f</button>
-                  <button onClick={this.handlePlayback.bind(this, "repeat")}>r</button>
+                  <button onClick={this.handlePlayback.bind(this, "repeat")}>r</button> */}
+                  <IconButton color="secondary" onClick={this.handlePlayback.bind(this, "shuffle")}>
+                    <ShuffleIcon style={{opacity : .5 + .5 * this.state.shuffleState}}/>
+                  </IconButton>
+                  <IconButton color="secondary" onClick={this.handlePlayback.bind(this, "back")}>
+                    <PreviousIcon />
+                  </IconButton>
+                  <Fab color="secondary" onClick={this.handlePlayback.bind(this, "playPause")}>
+                    {
+                      this.state.isPlaying ? <PauseIcon /> : <PlayIcon/>
+                    }
+                  </Fab>
+                  <IconButton color="secondary" onClick={this.handlePlayback.bind(this, "forward")}>
+                    <SkipIcon />
+                  </IconButton>
+                  <IconButton color="secondary" onClick={this.handlePlayback.bind(this, "repeat")}>
+                    { 
+                      this.state.repeatState == "off" ? <RepeatIcon color = "secondary" style={{opacity: .5}}/> 
+                      : this.state.repeatState == "context" ?  <RepeatIcon color = "secondary" /> : <RepeatOneIcon color="secondary" />
+                    }
+                  </IconButton>
               </div>
             </div>
           }
